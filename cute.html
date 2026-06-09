@@ -427,321 +427,54 @@
       filter: drop-shadow(0 16px 20px rgba(212,96,122,.16));
     }
 
-    /* Hello Kitty: no mouth, white round face, pink bow on right ear, 6 whiskers. */
+    .decor svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    /* Hello Kitty SVG: white round face, pink bow, oval eyes, yellow nose, 6 whiskers. */
     .kitty {
-      width: 168px;
-      height: 142px;
+      width: 156px;
+      height: 132px;
       left: -8px;
       top: 22px;
       animation: float 4.2s ease-in-out infinite;
     }
-    .kitty .head {
-      position: absolute;
-      left: 13px;
-      top: 18px;
-      width: 138px;
-      height: 110px;
-      border: 4px solid #292023;
-      border-radius: 52% 52% 48% 48%;
-      background: #fff;
-    }
-    .kitty .head::before,
-    .kitty .head::after {
-      content: "";
-      position: absolute;
-      top: -18px;
-      width: 42px;
-      height: 44px;
-      border: 4px solid #292023;
-      background: #fff;
-      z-index: -1;
-    }
-    .kitty .head::before { left: 10px; border-radius: 72% 22% 58% 30%; transform: rotate(-28deg); }
-    .kitty .head::after { right: 10px; border-radius: 22% 72% 30% 58%; transform: rotate(28deg); }
-    .kitty .eye {
-      position: absolute;
-      top: 70px;
-      width: 12px;
-      height: 18px;
-      border-radius: 50%;
-      background: #1f1b1d;
-    }
-    .kitty .eye.left { left: 56px; }
-    .kitty .eye.right { right: 56px; }
-    .kitty .nose {
-      position: absolute;
-      left: 50%;
-      top: 84px;
-      width: 22px;
-      height: 14px;
-      border: 3px solid #292023;
-      border-radius: 50%;
-      background: #ffd43b;
-      transform: translateX(-50%);
-    }
-    .kitty .whisker {
-      position: absolute;
-      width: 42px;
-      height: 3px;
-      border-radius: 999px;
-      background: #292023;
-    }
-    .kitty .w1 { left: 3px; top: 77px; transform: rotate(10deg); }
-    .kitty .w2 { left: 1px; top: 91px; }
-    .kitty .w3 { left: 5px; top: 105px; transform: rotate(-10deg); }
-    .kitty .w4 { right: 3px; top: 77px; transform: rotate(-10deg); }
-    .kitty .w5 { right: 1px; top: 91px; }
-    .kitty .w6 { right: 5px; top: 105px; transform: rotate(10deg); }
-    .kitty .bow {
-      position: absolute;
-      right: 6px;
-      top: 0;
-      width: 64px;
-      height: 48px;
+    .kitty .svg-bow {
       animation: bowWiggle 2.6s ease-in-out infinite;
-    }
-    .kitty .bow::before,
-    .kitty .bow::after {
-      content: "";
-      position: absolute;
-      top: 8px;
-      width: 34px;
-      height: 32px;
-      border: 3px solid #292023;
-      background: #FFB6C1;
-      border-radius: 52% 46% 50% 45%;
-    }
-    .kitty .bow::before { left: 0; transform: rotate(25deg); }
-    .kitty .bow::after { right: 0; transform: rotate(-25deg); }
-    .kitty .knot {
-      position: absolute;
-      left: 50%;
-      top: 17px;
-      width: 22px;
-      height: 20px;
-      border: 3px solid #292023;
-      border-radius: 50%;
-      background: #ff7fa3;
-      transform: translateX(-50%);
-      z-index: 2;
+      transform-box: fill-box;
+      transform-origin: center;
     }
 
-    /* Pingu: black oval body, white oval belly, small eyes, orange triangle beak and flat feet. */
+    /* Pingu SVG: black oval body, white belly, orange triangle beak and orange feet. */
     .pingu {
-      width: 150px;
-      height: 182px;
+      width: 140px;
+      height: 160px;
       right: 3%;
       top: -20px;
       animation: waddle 4s ease-in-out infinite;
     }
-    .pingu .body {
-      position: absolute;
-      left: 21px;
-      top: 12px;
-      width: 108px;
-      height: 142px;
-      border-radius: 52% 52% 46% 46%;
-      background: #151419;
-      box-shadow: inset -10px -12px 0 rgba(0,0,0,.2);
-    }
-    .pingu .belly {
-      position: absolute;
-      left: 43px;
-      top: 56px;
-      width: 64px;
-      height: 86px;
-      border-radius: 50%;
-      background: #fff;
-    }
-    .pingu .eye {
-      position: absolute;
-      top: 39px;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #fff;
-    }
-    .pingu .eye::after {
-      content: "";
-      position: absolute;
-      left: 5px;
-      top: 4px;
-      width: 6px;
-      height: 7px;
-      border-radius: 50%;
-      background: #111;
-    }
-    .pingu .eye.left { left: 57px; }
-    .pingu .eye.right { right: 57px; }
-    .pingu .beak {
-      position: absolute;
-      left: 50%;
-      top: 58px;
-      width: 0;
-      height: 0;
-      border-left: 22px solid transparent;
-      border-right: 22px solid transparent;
-      border-top: 28px solid #ff9c27;
-      transform: translateX(-50%);
-    }
-    .pingu .flipper {
-      position: absolute;
-      top: 72px;
-      width: 28px;
-      height: 70px;
-      border-radius: 70% 30% 70% 30%;
-      background: #151419;
-    }
-    .pingu .flipper.left { left: 7px; transform: rotate(18deg); }
-    .pingu .flipper.right { right: 7px; transform: rotate(-18deg); }
-    .pingu .foot {
-      position: absolute;
-      bottom: 5px;
-      width: 50px;
-      height: 20px;
-      border-radius: 50%;
-      background: #ff9c27;
-      box-shadow: inset 0 -5px 0 rgba(180,90,0,.18);
-    }
-    .pingu .foot.left { left: 27px; transform: rotate(-7deg); }
-    .pingu .foot.right { right: 27px; transform: rotate(7deg); }
 
-    /* Milo: milk-tea poodle baby with pom-pom ears, white bib, bow tie and paws. */
+    /* Milo SVG: D2A679 body, pom-pom ears, white bib, pink bow and white paws. */
     .milo {
-      width: 176px;
-      height: 186px;
+      width: 156px;
+      height: 160px;
       right: 2%;
       bottom: 22px;
       animation: fluffyBounce 4.6s ease-in-out infinite;
     }
-    .milo .body {
-      position: absolute;
-      left: 38px;
-      top: 82px;
-      width: 100px;
-      height: 92px;
-      border-radius: 50%;
-      background: var(--tea);
-      box-shadow: inset -10px -12px 0 rgba(135,84,45,.13);
-    }
-    .milo .head {
-      position: absolute;
-      left: 35px;
-      top: 10px;
-      width: 106px;
-      height: 98px;
-      border-radius: 50%;
-      background: var(--tea);
-      box-shadow: inset -9px -9px 0 rgba(135,84,45,.12);
-    }
-    .milo .pom {
-      position: absolute;
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      background: var(--tea);
-      box-shadow:
-        0 0 0 8px rgba(210,166,121,.35),
-        inset -7px -7px 0 rgba(135,84,45,.1);
-    }
-    .milo .pom.left { left: 14px; top: 0; }
-    .milo .pom.right { right: 14px; top: 0; }
-    .milo .ear {
-      position: absolute;
-      top: 44px;
-      width: 48px;
-      height: 64px;
-      border-radius: 50%;
-      background: var(--tea);
-      box-shadow: inset -7px -7px 0 rgba(135,84,45,.1);
-    }
-    .milo .ear.left { left: 10px; transform: rotate(18deg); }
-    .milo .ear.right { right: 10px; transform: rotate(-18deg); }
-    .milo .eye {
-      position: absolute;
-      top: 51px;
-      width: 10px;
-      height: 12px;
-      border-radius: 50%;
-      background: #161113;
-      box-shadow: 3px -2px 0 -1px #fff;
+    .milo .svg-eye {
       animation: blink 4.2s ease-in-out infinite;
+      transform-box: fill-box;
+      transform-origin: center;
     }
-    .milo .eye.left { left: 69px; }
-    .milo .eye.right { right: 69px; }
-    .milo .nose {
-      position: absolute;
-      left: 50%;
-      top: 68px;
-      width: 0;
-      height: 0;
-      border-left: 8px solid transparent;
-      border-right: 8px solid transparent;
-      border-top: 10px solid #161113;
-      transform: translateX(-50%);
-    }
-    .milo .collar {
-      position: absolute;
-      left: 49px;
-      top: 101px;
-      width: 78px;
-      height: 34px;
-      background: #fff;
-      clip-path: polygon(0 0, 48% 38%, 100% 0, 100% 100%, 0 100%);
-      border-radius: 0 0 18px 18px;
-    }
-    .milo .bib {
-      position: absolute;
-      left: 48px;
-      top: 122px;
-      width: 80px;
-      height: 48px;
-      border-radius: 0 0 42px 42px;
-      background: #fff;
-    }
-    .milo .bowtie {
-      position: absolute;
-      left: 50%;
-      top: 103px;
-      width: 40px;
-      height: 22px;
-      transform: translateX(-50%);
+    .milo .svg-bowtie {
       animation: bowWiggle 2.4s ease-in-out infinite;
+      transform-box: fill-box;
+      transform-origin: center;
     }
-    .milo .bowtie::before,
-    .milo .bowtie::after {
-      content: "";
-      position: absolute;
-      top: 3px;
-      width: 18px;
-      height: 16px;
-      border-radius: 50% 45% 50% 45%;
-      background: #ff7fa3;
-    }
-    .milo .bowtie::before { left: 0; transform: rotate(18deg); }
-    .milo .bowtie::after { right: 0; transform: rotate(-18deg); }
-    .milo .bowtie span {
-      position: absolute;
-      left: 50%;
-      top: 7px;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #D4607A;
-      transform: translateX(-50%);
-      z-index: 1;
-    }
-    .milo .paw {
-      position: absolute;
-      bottom: 2px;
-      width: 34px;
-      height: 24px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: inset 0 -4px 0 rgba(255,182,193,.2);
-    }
-    .milo .paw.left { left: 45px; transform: rotate(-8deg); }
-    .milo .paw.right { right: 45px; transform: rotate(8deg); }
 
     @keyframes float {
       0%, 100% { transform: translateY(0) rotate(-1deg); }
@@ -828,11 +561,27 @@
   <main>
     <section class="wrap hero">
       <div class="decor kitty" aria-hidden="true">
-        <div class="head"></div>
-        <div class="bow"><span class="knot"></span></div>
-        <span class="eye left"></span><span class="eye right"></span><span class="nose"></span>
-        <span class="whisker w1"></span><span class="whisker w2"></span><span class="whisker w3"></span>
-        <span class="whisker w4"></span><span class="whisker w5"></span><span class="whisker w6"></span>
+        <svg viewBox="0 0 156 132" role="img" aria-label="Hello Kitty">
+          <g fill="none" stroke="#292023" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M40 35 L23 7 C20 2 27 -2 34 3 L57 23" fill="#fff" stroke-width="4" />
+            <path d="M116 35 L133 7 C136 2 129 -2 122 3 L99 23" fill="#fff" stroke-width="4" />
+            <ellipse cx="78" cy="70" rx="61" ry="50" fill="#fff" stroke-width="4" />
+            <line x1="18" y1="66" x2="54" y2="72" stroke-width="3" />
+            <line x1="15" y1="80" x2="52" y2="80" stroke-width="3" />
+            <line x1="18" y1="94" x2="54" y2="88" stroke-width="3" />
+            <line x1="102" y1="72" x2="138" y2="66" stroke-width="3" />
+            <line x1="104" y1="80" x2="141" y2="80" stroke-width="3" />
+            <line x1="102" y1="88" x2="138" y2="94" stroke-width="3" />
+          </g>
+          <ellipse cx="60" cy="68" rx="5.5" ry="8.5" fill="#1f1b1d" />
+          <ellipse cx="96" cy="68" rx="5.5" ry="8.5" fill="#1f1b1d" />
+          <ellipse cx="78" cy="82" rx="10" ry="7" fill="#ffd43b" stroke="#292023" stroke-width="3" />
+          <g class="svg-bow" stroke="#292023" stroke-linejoin="round" stroke-width="3">
+            <path d="M103 19 C93 5 86 14 88 29 C90 43 101 42 112 32 Z" fill="#FFB6C1" />
+            <path d="M128 16 C143 5 149 20 139 34 C130 47 119 39 112 32 Z" fill="#FFB6C1" />
+            <circle cx="113" cy="31" r="10" fill="#ff7fa3" />
+          </g>
+        </svg>
       </div>
 
       <div>
@@ -868,10 +617,19 @@
 
     <section class="wrap" id="flow">
       <div class="decor pingu" aria-hidden="true">
-        <div class="body"></div><div class="belly"></div>
-        <span class="eye left"></span><span class="eye right"></span><span class="beak"></span>
-        <span class="flipper left"></span><span class="flipper right"></span>
-        <span class="foot left"></span><span class="foot right"></span>
+        <svg viewBox="0 0 140 160" role="img" aria-label="Pingu">
+          <ellipse cx="45" cy="144" rx="26" ry="10" fill="#ff9c27" />
+          <ellipse cx="95" cy="144" rx="26" ry="10" fill="#ff9c27" />
+          <path d="M34 71 C10 88 12 124 33 132" fill="none" stroke="#151419" stroke-width="21" stroke-linecap="round" />
+          <path d="M106 71 C130 88 128 124 107 132" fill="none" stroke="#151419" stroke-width="21" stroke-linecap="round" />
+          <ellipse cx="70" cy="75" rx="49" ry="68" fill="#151419" />
+          <ellipse cx="70" cy="92" rx="31" ry="44" fill="#fff" />
+          <circle cx="55" cy="44" r="7" fill="#fff" />
+          <circle cx="85" cy="44" r="7" fill="#fff" />
+          <ellipse cx="57" cy="45" rx="3" ry="4" fill="#111" />
+          <ellipse cx="83" cy="45" rx="3" ry="4" fill="#111" />
+          <path d="M48 59 L92 59 L70 85 Z" fill="#ff9c27" />
+        </svg>
       </div>
       <div class="section-head">
         <h2>三大韩国票务平台流程图 🐧</h2>
@@ -920,13 +678,39 @@
 
     <section class="wrap" id="architecture">
       <div class="decor milo" aria-hidden="true">
-        <span class="pom left"></span><span class="pom right"></span>
-        <span class="ear left"></span><span class="ear right"></span>
-        <div class="body"></div><div class="head"></div>
-        <span class="eye left"></span><span class="eye right"></span><span class="nose"></span>
-        <span class="collar"></span><span class="bib"></span>
-        <span class="bowtie"><span></span></span>
-        <span class="paw left"></span><span class="paw right"></span>
+        <svg viewBox="0 0 156 160" role="img" aria-label="Milo">
+          <g fill="#D2A679">
+            <ellipse cx="78" cy="109" rx="48" ry="43" />
+            <circle cx="38" cy="31" r="24" />
+            <circle cx="118" cy="31" r="24" />
+            <circle cx="31" cy="45" r="17" />
+            <circle cx="49" cy="24" r="16" />
+            <circle cx="109" cy="24" r="16" />
+            <circle cx="127" cy="45" r="17" />
+            <ellipse cx="42" cy="68" rx="22" ry="33" transform="rotate(18 42 68)" />
+            <ellipse cx="114" cy="68" rx="22" ry="33" transform="rotate(-18 114 68)" />
+            <ellipse cx="78" cy="58" rx="48" ry="44" />
+          </g>
+          <g fill="none" stroke="rgba(135,84,45,.16)" stroke-linecap="round" stroke-width="7">
+            <path d="M48 20 C39 25 35 34 38 44" />
+            <path d="M108 20 C119 27 123 36 118 47" />
+            <path d="M106 118 C113 106 113 93 105 83" />
+          </g>
+          <path d="M43 91 L76 111 L113 91 L113 137 C99 146 58 146 43 137 Z" fill="#fff" />
+          <path d="M49 112 C53 144 103 144 108 112 L78 126 Z" fill="#fff" />
+          <g class="svg-bowtie">
+            <path d="M57 97 C43 88 43 111 57 106 L75 101 Z" fill="#ff7fa3" />
+            <path d="M99 97 C113 88 113 111 99 106 L81 101 Z" fill="#ff7fa3" />
+            <circle cx="78" cy="102" r="7" fill="#D4607A" />
+          </g>
+          <ellipse class="svg-eye" cx="62" cy="55" rx="5" ry="7" fill="#161113" />
+          <ellipse class="svg-eye" cx="94" cy="55" rx="5" ry="7" fill="#161113" />
+          <circle cx="64" cy="52" r="1.5" fill="#fff" />
+          <circle cx="96" cy="52" r="1.5" fill="#fff" />
+          <path d="M69 70 L87 70 L78 80 Z" fill="#161113" />
+          <ellipse cx="57" cy="146" rx="18" ry="11" fill="#fff" />
+          <ellipse cx="99" cy="146" rx="18" ry="11" fill="#fff" />
+        </svg>
       </div>
       <div class="section-head">
         <h2>技术架构 ✨</h2>
