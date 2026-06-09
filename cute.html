@@ -389,7 +389,18 @@
     .timeline-item:nth-child(2) { animation-delay: .45s; }
     .timeline-item:nth-child(3) { animation-delay: .9s; }
     .timeline-item:nth-child(4) { animation-delay: 1.35s; }
-    .timeline-item:nth-child(5) { animation-delay: 1.8s; }
+    .timeline-item.active {
+      background: rgba(255,182,193,.35);
+      box-shadow: 0 0 20px rgba(255,127,163,.5), var(--soft-shadow);
+      transform: scale(1.03);
+      transition: all .3s ease;
+    }
+    .timeline-item.done {
+      opacity: .6;
+    }
+    .timeline-item.done .time {
+      background: linear-gradient(135deg, #aaa, #999);
+    }
     .time {
       display: grid;
       place-items: center;
@@ -669,16 +680,17 @@
         <p>从开售前准备到候选锁座，循环展示自动化流程如何把分散动作压缩成一条可跟踪的粉色时间线。</p>
       </div>
       <div class="timeline-shell">
-        <div class="timer-card">
-          <div class="big-clock">20:00</div>
-          <p>开售时间到，页面进入高频监测；每一次刷新、筛选和提醒都被记录成清晰状态。</p>
+        <div class="timer-card" id="sim-card">
+          <div class="big-clock" id="sim-clock">20:00</div>
+          <p id="sim-status">点击下方按钮，模拟抢票全流程 ✨</p>
+          <button class="btn primary" id="sim-btn" onclick="startSim()" style="margin-top:12px;font-size:20px;padding:14px 36px">🎫 开始模拟抢票</button>
         </div>
         <div class="timeline-list">
-          <div class="timeline-item"><div class="time">T-10m</div><div><b>预热检查</b><span>确认登录、网络、目标场次、票档和通知通道。</span></div></div>
-          <div class="timeline-item"><div class="time">T-30s</div><div><b>进入待命</b><span>保持页面活跃，准备进入开售监测循环。</span></div></div>
-          <div class="timeline-item"><div class="time">T+0s</div><div><b>入口开放</b><span>开始识别按钮、排队、验证码提示和票况状态。</span></div></div>
-          <div class="timeline-item"><div class="time">T+3s</div><div><b>候选出现</b><span>按区域、价格、连座数量筛选出优先座位。</span></div></div>
-          <div class="timeline-item"><div class="time">T+6s</div><div><b>提醒确认</b><span>把候选结果同步给张星月，进入最终确认节点。</span></div></div>
+          <div class="timeline-item" id="step0"><div class="time">T-10m</div><div><b>预热检查</b><span>确认登录、网络、目标场次、票档和通知通道。</span></div></div>
+          <div class="timeline-item" id="step1"><div class="time">T-30s</div><div><b>进入待命</b><span>保持页面活跃，准备进入开售监测循环。</span></div></div>
+          <div class="timeline-item" id="step2"><div class="time">T+0s</div><div><b>入口开放</b><span>开始识别按钮、排队、验证码提示和票况状态。</span></div></div>
+          <div class="timeline-item" id="step3"><div class="time">T+3s</div><div><b>候选出现</b><span>按区域、价格、连座数量筛选出优先座位。</span></div></div>
+          <div class="timeline-item" id="step4"><div class="time">T+6s</div><div><b>提醒确认</b><span>把候选结果同步给张星月，进入最终确认节点。</span></div></div>
         </div>
       </div>
     </section>
@@ -694,5 +706,54 @@
       </div>
     </section>
   </main>
+<script>
+let simRunning = false;
+function startSim() {
+  if (simRunning) return;
+  simRunning = true;
+  const btn = document.getElementById('sim-btn');
+  const clock = document.getElementById('sim-clock');
+  const status = document.getElementById('sim-status');
+  btn.disabled = true;
+  btn.textContent = '⏳ 模拟进行中...';
+  
+  const steps = [
+    { time: '19:50', status: '🔍 正在确认登录状态...', text: '预热检查中' },
+    { time: '19:59', status: '⚡ 高频刷新监控中，等待开售...', text: '待命中' },
+    { time: '20:00', status: '🚀 开售！正在识别入口按钮...', text: '入口开放' },
+    { time: '20:00', status: '🎯 扫描座位图，筛选候选座位...', text: '候选筛选中' },
+    { time: '20:00', status: '✅ 找到 2 个候选座位！已通知张星月 💕', text: '模拟完成！' },
+  ];
+  
+  // Reset all steps
+  for (let i = 0; i < 5; i++) {
+    document.getElementById('step'+i).classList.remove('active', 'done');
+  }
+  
+  let i = 0;
+  function next() {
+    if (i > 0) document.getElementById('step'+(i-1)).classList.replace('active', 'done');
+    if (i >= steps.length) {
+      clock.textContent = '20:00';
+      status.textContent = '✅ 模拟完成！候选座位已通知张星月 🎉';
+      btn.textContent = '🔄 再来一次';
+      btn.disabled = false;
+      simRunning = false;
+      // Keep last step active
+      document.getElementById('step4').classList.add('active');
+      return;
+    }
+    const s = steps[i];
+    clock.textContent = s.time;
+    status.textContent = s.status;
+    document.getElementById('step'+i).classList.add('active');
+    // Scroll into view
+    document.getElementById('step'+i).scrollIntoView({behavior:'smooth',block:'center'});
+    i++;
+    setTimeout(next, i === 5 ? 1200 : 800);
+  }
+  next();
+}
+</script>
 </body>
 </html>
