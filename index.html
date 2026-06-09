@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EXO 演唱会抢票神器</title>
+  <style>
+    :root {
+      --bg: #070912;
+      --panel: rgba(18, 22, 42, 0.72);
+      --panel-strong: rgba(25, 31, 58, 0.92);
+      --line: rgba(130, 146, 255, 0.28);
+      --text: #f7f8ff;
+      --muted: #aab0c9;
+      --cyan: #5cf3ff;
+      --violet: #8f6bff;
+      --pink: #ff4fd8;
+      --green: #5dffb5;
+      --yellow: #ffe066;
+      --danger: #ff6b8a;
+      --shadow: 0 28px 90px rgba(0, 0, 0, 0.48);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--text);
+      font-family: "Microsoft YaHei", "PingFang SC", "Inter", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 15% 4%, rgba(92, 243, 255, 0.22), transparent 34%),
+        radial-gradient(circle at 80% 8%, rgba(255, 79, 216, 0.20), transparent 30%),
+        linear-gradient(180deg, #070912 0%, #0a1024 42%, #070912 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.85), transparent 78%);
+      z-index: -2;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(120deg, transparent, rgba(92, 243, 255, 0.06), transparent);
+      animation: scan 8s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes scan {
+      from { transform: translateX(-120%); }
+      to { transform: translateX(120%); }
+    }
+
+    .wrap {
+      width: min(1520px, calc(100% - 64px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(20px);
+      background: rgba(7, 9, 18, 0.62);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-inner {
+      height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-badge {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--cyan), var(--pink));
+      box-shadow: 0 0 34px rgba(92, 243, 255, 0.36);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .nav-links a {
+      color: inherit;
+      text-decoration: none;
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .hero {
+      min-height: 820px;
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      align-items: center;
+      gap: 64px;
+      padding: 76px 0 92px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1px solid rgba(92, 243, 255, 0.34);
+      border-radius: 999px;
+      color: var(--cyan);
+      background: rgba(92, 243, 255, 0.08);
+      box-shadow: inset 0 0 18px rgba(92, 243, 255, 0.06);
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 26px 0 18px;
+      font-size: clamp(54px, 5.3vw, 106px);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, #fff 0%, var(--cyan) 28%, var(--pink) 78%, #fff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 24px rgba(92, 243, 255, 0.22));
+    }
+
+    .hero-copy {
+      width: min(720px, 100%);
+      color: var(--muted);
+      font-size: 21px;
+      line-height: 1.76;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 34px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 0 22px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 16px 46px rgba(0, 0, 0, 0.24);
+    }
+
+    .btn.primary {
+      color: #06101a;
+      background: linear-gradient(135deg, var(--cyan), var(--green));
+      box-shadow: 0 20px 60px rgba(92, 243, 255, 0.28);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 46px;
+    }
+
+    .stat {
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.055);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      color: var(--text);
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 620px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at 28% 18%, rgba(92, 243, 255, 0.18), transparent 34%),
+        radial-gradient(circle at 70% 86%, rgba(255, 79, 216, 0.20), transparent 34%),
+        rgba(15, 19, 36, 0.72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .stage {
+      position: absolute;
+      left: 50%;
+      top: 54px;
+      width: 56%;
+      height: 86px;
+      transform: translateX(-50%);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #06101a;
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--cyan), var(--pink));
+      box-shadow: 0 0 48px rgba(92, 243, 255, 0.42);
+    }
+
+    .seat-map {
+      position: absolute;
+      inset: 174px 54px 58px;
+      display: grid;
+      grid-template-columns: repeat(14, 1fr);
+      gap: 12px;
+      transform: perspective(900px) rotateX(8deg);
+    }
+
+    .seat {
+      min-height: 27px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.13);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+      animation: seatPulse 3s ease-in-out infinite;
+      animation-delay: calc(var(--i) * 35ms);
+    }
+
+    .seat.hot {
+      background: linear-gradient(135deg, var(--cyan), var(--green));
+      box-shadow: 0 0 22px rgba(93, 255, 181, 0.38);
+    }
+
+    .seat.locked {
+      background: linear-gradient(135deg, var(--pink), var(--violet));
+      box-shadow: 0 0 26px rgba(255, 79, 216, 0.45);
+    }
+
+    @keyframes seatPulse {
+      0%, 100% { opacity: 0.52; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(-2px); }
+    }
+
+    .floating {
+      position: absolute;
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      background: rgba(10, 15, 30, 0.82);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 16px 44px rgba(0,0,0,0.36);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .floating strong {
+      display: block;
+      color: var(--text);
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .float-1 { left: 28px; top: 36px; }
+    .float-2 { right: 30px; top: 176px; }
+    .float-3 { left: 36px; bottom: 34px; }
+
+    section {
+      padding: 86px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 32px;
+      margin-bottom: 34px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(34px, 3vw, 56px);
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      width: min(560px, 100%);
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.72;
+    }
+
+    .platform-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .platform {
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 22px 70px rgba(0,0,0,0.22);
+    }
+
+    .platform h3 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 0 22px;
+      font-size: 25px;
+    }
+
+    .flow {
+      display: grid;
+      gap: 14px;
+    }
+
+    .flow-step {
+      position: relative;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.055);
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 30px;
+      bottom: -15px;
+      width: 2px;
+      height: 15px;
+      background: linear-gradient(var(--cyan), transparent);
+    }
+
+    .num {
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      color: #06101a;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--cyan), var(--green));
+    }
+
+    .flow-step b {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      position: relative;
+      min-height: 238px;
+      padding: 22px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.035));
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -80px -80px auto auto;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(92,243,255,0.26), transparent 68%);
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 28px;
+      border-radius: 8px;
+      background: rgba(92,243,255,0.12);
+      font-size: 25px;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.68;
+      font-size: 14px;
+    }
+
+    .architecture {
+      padding: 32px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      background: var(--panel-strong);
+      box-shadow: var(--shadow);
+    }
+
+    .arch-row {
+      display: grid;
+      grid-template-columns: 1fr 70px 1fr 70px 1fr 70px 1fr;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .arch-node {
+      min-height: 180px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 26px;
+      border-radius: 8px;
+      border: 1px solid rgba(92, 243, 255, 0.28);
+      background:
+        linear-gradient(160deg, rgba(92,243,255,0.12), rgba(255,79,216,0.08)),
+        rgba(255,255,255,0.045);
+    }
+
+    .arch-node .emoji {
+      font-size: 38px;
+      margin-bottom: 14px;
+    }
+
+    .arch-node b {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .arch-node span {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .arrow {
+      position: relative;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--pink));
+      box-shadow: 0 0 22px rgba(92,243,255,0.55);
+    }
+
+    .arrow::after {
+      content: "";
+      position: absolute;
+      right: -2px;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      border-top: 2px solid var(--pink);
+      border-right: 2px solid var(--pink);
+      transform: translateY(-50%) rotate(45deg);
+    }
+
+    .timeline-shell {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .timer-card, .log-card {
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      background: rgba(13, 18, 36, 0.78);
+      box-shadow: 0 24px 74px rgba(0,0,0,0.26);
+      overflow: hidden;
+    }
+
+    .timer-card {
+      padding: 32px;
+    }
+
+    .big-clock {
+      display: grid;
+      place-items: center;
+      height: 340px;
+      border-radius: 8px;
+      background:
+        radial-gradient(circle, rgba(92,243,255,0.18), transparent 54%),
+        rgba(255,255,255,0.045);
+      border: 1px solid rgba(92,243,255,0.18);
+      text-align: center;
+    }
+
+    .clock-value {
+      font-size: clamp(48px, 5vw, 86px);
+      font-weight: 900;
+      color: var(--cyan);
+      text-shadow: 0 0 34px rgba(92,243,255,0.42);
+    }
+
+    .clock-label {
+      color: var(--muted);
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    .progress {
+      height: 12px;
+      margin-top: 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--green), var(--pink));
+      animation: progress 8s ease-in-out infinite;
+    }
+
+    @keyframes progress {
+      0% { width: 0; }
+      18% { width: 18%; }
+      42% { width: 48%; }
+      70% { width: 82%; }
+      100% { width: 100%; }
+    }
+
+    .log-card {
+      padding: 0;
+    }
+
+    .log-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.045);
+      font-weight: 800;
+    }
+
+    .live-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--green);
+      font-size: 13px;
+    }
+
+    .live-dot::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 18px var(--green);
+      animation: blink 1s steps(2, jump-none) infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0.25; }
+    }
+
+    .logs {
+      padding: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .log {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 15px 16px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.052);
+      border: 1px solid rgba(255,255,255,0.08);
+      opacity: 0.3;
+      transform: translateX(22px);
+      animation: logIn 8s ease-in-out infinite;
+      animation-delay: var(--d);
+    }
+
+    .log:nth-child(1) { --d: 0s; }
+    .log:nth-child(2) { --d: 1.2s; }
+    .log:nth-child(3) { --d: 2.4s; }
+    .log:nth-child(4) { --d: 3.6s; }
+    .log:nth-child(5) { --d: 4.8s; }
+    .log:nth-child(6) { --d: 6s; }
+
+    @keyframes logIn {
+      0%, 12% { opacity: 0.3; transform: translateX(22px); }
+      22%, 88% { opacity: 1; transform: translateX(0); }
+      100% { opacity: 0.3; transform: translateX(0); }
+    }
+
+    .log time {
+      color: var(--cyan);
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+    }
+
+    .log b {
+      font-size: 15px;
+    }
+
+    .log span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(93, 255, 181, 0.13);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .cta {
+      padding: 92px 0 110px;
+    }
+
+    .cta-box {
+      position: relative;
+      min-height: 380px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 56px 24px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background:
+        radial-gradient(circle at 30% 20%, rgba(92,243,255,0.26), transparent 36%),
+        radial-gradient(circle at 72% 76%, rgba(255,79,216,0.20), transparent 34%),
+        rgba(15, 20, 38, 0.88);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .cta-box h2 {
+      margin: 0 0 18px;
+      font-size: clamp(36px, 4vw, 72px);
+    }
+
+    .cta-box p {
+      width: min(760px, 100%);
+      margin: 0 auto 30px;
+      color: var(--muted);
+      font-size: 19px;
+      line-height: 1.76;
+    }
+
+    .notice {
+      width: min(980px, 100%);
+      margin: 26px auto 0;
+      color: rgba(247,248,255,0.68);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1180px) {
+      .hero,
+      .timeline-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .features {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .platform-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .arch-row {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        width: 2px;
+        height: 54px;
+        margin: 0 auto;
+      }
+
+      .arrow::after {
+        right: 50%;
+        top: auto;
+        bottom: -2px;
+        transform: translateX(50%) rotate(135deg);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .wrap {
+        width: min(100% - 28px, 1520px);
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 44px;
+      }
+
+      .hero-visual {
+        min-height: 520px;
+      }
+
+      .seat-map {
+        inset: 150px 22px 44px;
+        gap: 8px;
+        grid-template-columns: repeat(10, 1fr);
+      }
+
+      .stats,
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-head p {
+        margin-top: 16px;
+      }
+
+      .log {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <div class="brand"><span class="brand-badge">🎤</span> EXO Ticket Auto</div>
+      <div class="nav-links">
+        <a href="#flow">平台流程</a>
+        <a href="#features">核心功能</a>
+        <a href="#architecture">技术架构</a>
+        <a href="#timeline">时间线</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="wrap hero">
+      <div>
+        <div class="eyebrow">⚡ 开售瞬间进入自动化节奏</div>
+        <h1><span class="gradient-text">EXO 演唱会抢票神器</span><br />轻松、快速、自动化</h1>
+        <p class="hero-copy">
+          面向韩国演唱会热门开售场景的自动化购票体验展示：预设场次、自动刷新、智能识别座位状态、秒级通知结果，让抢 EXO 门票从手忙脚乱变成清晰可控的流程。
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#timeline">🚀 查看抢票模拟</a>
+          <a class="btn" href="#architecture">🧩 了解架构</a>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong>0.3s</strong><span>模拟座位响应节奏</span></div>
+          <div class="stat"><strong>3 平台</strong><span>Yes24 / Melon / Interpark</span></div>
+          <div class="stat"><strong>24h</strong><span>通知管道在线守候</span></div>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="演唱会座位示意图">
+        <div class="stage">EXO STAGE</div>
+        <div class="floating float-1"><strong>🎯 智能目标</strong>首选内场 A 区 / 连座优先</div>
+        <div class="floating float-2"><strong>🔒 模拟锁座</strong>发现可选座位后即时提交</div>
+        <div class="floating float-3"><strong>📣 实时通知</strong>QQ 与飞书同步推送</div>
+        <div class="seat-map" id="seatMap"></div>
+      </div>
+    </section>
+
+    <section class="wrap" id="flow">
+      <div class="section-head">
+        <h2>三大韩国票务平台流程图</h2>
+        <p>用统一的自动化思路适配不同平台节奏：先准备、再监测、再选择、再通知，减少重复操作，把注意力留给最终确认。</p>
+      </div>
+      <div class="platform-grid">
+        <article class="platform">
+          <h3>Yes24 <span>🎫</span></h3>
+          <div class="flow">
+            <div class="flow-step"><div class="num">1</div><div><b>登录与场次预热</b><span>提前载入 EXO 场次页面，保存区域偏好。</span></div></div>
+            <div class="flow-step"><div class="num">2</div><div><b>开售时间监听</b><span>倒计时结束后自动进入刷新节奏。</span></div></div>
+            <div class="flow-step"><div class="num">3</div><div><b>座位状态扫描</b><span>快速读取可选座位并按优先级排序。</span></div></div>
+            <div class="flow-step"><div class="num">4</div><div><b>提醒人工确认</b><span>锁定候选后推送消息，保留最终支付判断。</span></div></div>
+          </div>
+        </article>
+        <article class="platform">
+          <h3>Melon Ticket <span>🍈</span></h3>
+          <div class="flow">
+            <div class="flow-step"><div class="num">1</div><div><b>账号状态检查</b><span>确认登录、会员权限与购票入口可用。</span></div></div>
+            <div class="flow-step"><div class="num">2</div><div><b>队列节奏跟随</b><span>自动记录排队状态，降低错过窗口的概率。</span></div></div>
+            <div class="flow-step"><div class="num">3</div><div><b>Canvas 智能选座</b><span>模拟视觉定位，优先点击高价值区域。</span></div></div>
+            <div class="flow-step"><div class="num">4</div><div><b>结果同步通知</b><span>把候选座位、时间和状态发送到通知群。</span></div></div>
+          </div>
+        </article>
+        <article class="platform">
+          <h3>Interpark <span>🌐</span></h3>
+          <div class="flow">
+            <div class="flow-step"><div class="num">1</div><div><b>多入口监测</b><span>同时关注普通入口、场次入口和区域入口。</span></div></div>
+            <div class="flow-step"><div class="num">2</div><div><b>自动化筛选</b><span>按价格、区域、连座数量过滤候选。</span></div></div>
+            <div class="flow-step"><div class="num">3</div><div><b>API 级锁座</b><span>用更快的模拟流程展示锁座链路。</span></div></div>
+            <div class="flow-step"><div class="num">4</div><div><b>失败快速重试</b><span>遇到售罄或超时立即回到监测循环。</span></div></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap" id="features">
+      <div class="section-head">
+        <h2>核心功能</h2>
+        <p>页面以轻量、快速、自动化为中心，把抢票动作拆成可监控的模块，让每一步都有状态、有节奏、有反馈。</p>
+      </div>
+      <div class="features">
+        <article class="card"><div class="icon">🔐</div><h3>API 级锁座</h3><p>模拟从候选座位到锁座请求的高速链路，强调开售瞬间的快速响应体验。</p></article>
+        <article class="card"><div class="icon">🖱️</div><h3>Canvas 智能选座</h3><p>适配可视化座位图，通过坐标与区域策略完成自动化选座演示。</p></article>
+        <article class="card"><div class="icon">🛡️</div><h3>反爬对抗</h3><p>以合规展示方式呈现限流、排队、重试等复杂场景的状态管理思路。</p></article>
+        <article class="card"><div class="icon">🛰️</div><h3>多平台覆盖</h3><p>覆盖 Yes24、Melon、Interpark 三种常见韩国演唱会票务路径。</p></article>
+        <article class="card"><div class="icon">📣</div><h3>QQ/飞书通知</h3><p>开售、候选、锁座、失败重试都能同步提醒，减少盯屏压力。</p></article>
+      </div>
+    </section>
+
+    <section class="wrap" id="architecture">
+      <div class="section-head">
+        <h2>技术架构图</h2>
+        <p>从浏览器侧自动化到通知侧闭环，形成一个清晰的抢票工作台：轻松设置，快速监测，自动反馈。</p>
+      </div>
+      <div class="architecture">
+        <div class="arch-row">
+          <div class="arch-node"><div><div class="emoji">🧭</div><b>Chrome 插件</b><span>负责入口管理、页面状态捕捉和可视化配置。</span></div></div>
+          <div class="arrow"></div>
+          <div class="arch-node"><div><div class="emoji">🐵</div><b>油猴脚本</b><span>贴近页面运行，执行刷新、识别、点击与状态同步。</span></div></div>
+          <div class="arrow"></div>
+          <div class="arch-node"><div><div class="emoji">⚙️</div><b>API 层</b><span>统一封装候选座位、锁座状态和失败重试逻辑。</span></div></div>
+          <div class="arrow"></div>
+          <div class="arch-node"><div><div class="emoji">📨</div><b>通知管道</b><span>通过 QQ 与飞书把关键结果推到你手边。</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" id="timeline">
+      <div class="section-head">
+        <h2>抢票时间线动画</h2>
+        <p>下面是从开售到候选锁座的模拟过程，循环展示自动化脚本如何把分散动作压缩成一条高速流水线。</p>
+      </div>
+      <div class="timeline-shell">
+        <div class="timer-card">
+          <div class="big-clock">
+            <div>
+              <div class="clock-value" id="clockValue">T-00:05</div>
+              <div class="clock-label" id="clockLabel">开售前预热，等待自动触发</div>
+            </div>
+          </div>
+          <div class="progress"><span></span></div>
+        </div>
+        <div class="log-card">
+          <div class="log-head"><span>自动化执行日志</span><span class="live-dot">LIVE</span></div>
+          <div class="logs">
+            <div class="log"><time>T-05s</time><b>场次页面已预热</b><span class="status">准备</span></div>
+            <div class="log"><time>T-00s</time><b>开售触发，进入高速刷新</b><span class="status">执行</span></div>
+            <div class="log"><time>+0.4s</time><b>读取可选区域，生成座位候选</b><span class="status">扫描</span></div>
+            <div class="log"><time>+0.8s</time><b>Canvas 坐标定位完成</b><span class="status">选座</span></div>
+            <div class="log"><time>+1.2s</time><b>模拟锁座请求返回成功</b><span class="status">锁定</span></div>
+            <div class="log"><time>+1.5s</time><b>QQ/飞书通知已发送</b><span class="status">通知</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap cta">
+      <div class="cta-box">
+        <div>
+          <h2>让抢 EXO 门票变得更轻松</h2>
+          <p>把重复刷新、区域筛选、候选识别和消息提醒交给自动化流程，你只需要关注关键确认节点。</p>
+          <a class="btn primary" href="#flow">✨ 立即查看完整流程</a>
+          <p class="notice">本页面为静态视觉演示，不连接任何票务平台，不提供真实绕过、攻击、滥用或违反平台规则的实现代码。实际购票请遵守平台条款、演出主办方规则和当地法律法规。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const seatMap = document.getElementById("seatMap");
+    for (let i = 0; i < 154; i += 1) {
+      const seat = document.createElement("span");
+      seat.className = "seat";
+      seat.style.setProperty("--i", i);
+      if ([18, 19, 20, 34, 35, 49, 50, 51, 76, 77, 103, 104].includes(i)) seat.classList.add("hot");
+      if ([62, 63, 64, 88, 89, 90, 118, 119].includes(i)) seat.classList.add("locked");
+      seatMap.appendChild(seat);
+    }
+
+    const clockValue = document.getElementById("clockValue");
+    const clockLabel = document.getElementById("clockLabel");
+    const frames = [
+      ["T-00:05", "开售前预热，等待自动触发"],
+      ["T-00:00", "开售触发，自动进入刷新"],
+      ["+00.4s", "扫描可选区域，生成候选座位"],
+      ["+00.8s", "Canvas 智能选座，定位目标"],
+      ["+01.2s", "候选座位锁定，等待确认"],
+      ["+01.5s", "QQ/飞书通知已推送"]
+    ];
+    let frameIndex = 0;
+    setInterval(() => {
+      frameIndex = (frameIndex + 1) % frames.length;
+      clockValue.textContent = frames[frameIndex][0];
+      clockLabel.textContent = frames[frameIndex][1];
+    }, 1350);
+  </script>
+</body>
+</html>
