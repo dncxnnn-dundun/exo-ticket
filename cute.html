@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>张星月专属EXO演唱会抢票神器</title>
+  <style>
+    :root {
+      --mist: #FFE4E1;
+      --pink: #FFB6C1;
+      --white: #FFFFFF;
+      --deep: #D4607A;
+      --text: #72495a;
+      --muted: #9c6a79;
+      --tea: #D2A679;
+      --shadow: 0 24px 60px rgba(255, 142, 184, .28);
+      --soft-shadow: 0 14px 34px rgba(212, 96, 122, .16);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Arial Rounded MT Bold", "Comic Sans MS", "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 8% 8%, rgba(255,255,255,.95) 0 8%, transparent 22%),
+        radial-gradient(circle at 92% 12%, rgba(255,182,193,.55) 0 9%, transparent 25%),
+        radial-gradient(circle at 82% 86%, rgba(255,228,225,.9) 0 16%, transparent 36%),
+        linear-gradient(135deg, #FFFFFF 0%, #FFE4E1 38%, #FFB6C1 72%, #FFFFFF 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.88) 5px, transparent 6px),
+        radial-gradient(circle, rgba(212,96,122,.15) 2px, transparent 3px);
+      background-size: 96px 96px, 58px 58px;
+      background-position: 14px 18px, 0 0;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(1160px, calc(100% - 34px)); margin: 0 auto; }
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255,255,255,.72);
+      border-bottom: 1px solid rgba(255,182,193,.55);
+      backdrop-filter: blur(18px);
+    }
+    .nav-inner {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      color: var(--deep);
+      white-space: nowrap;
+    }
+    .brand-badge {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #fff, var(--mist));
+      box-shadow: var(--soft-shadow);
+      animation: bounce 2.6s ease-in-out infinite;
+    }
+    .nav-links { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .nav-links a {
+      padding: 10px 14px;
+      border-radius: 999px;
+      color: #b84d68;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .nav-links a:hover { background: rgba(255,255,255,.76); box-shadow: var(--soft-shadow); }
+
+    main section { position: relative; }
+    main section:not(.hero) { padding: 72px 0; }
+    .hero {
+      min-height: calc(100vh - 70px);
+      display: grid;
+      grid-template-columns: 1.02fr .98fr;
+      align-items: center;
+      gap: 46px;
+      padding: 76px 0 72px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.78);
+      color: var(--deep);
+      font-weight: 900;
+      box-shadow: var(--soft-shadow);
+      animation: swing 3.4s ease-in-out infinite;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      margin: 22px 0 18px;
+      color: var(--deep);
+      font-size: clamp(42px, 6.2vw, 78px);
+      line-height: 1.04;
+      letter-spacing: 0;
+      text-shadow: 0 8px 0 rgba(255,255,255,.64);
+    }
+    .gradient-text {
+      background: linear-gradient(100deg, #D4607A, #ff7fa3, #c54869);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-copy {
+      max-width: 660px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.8;
+      font-weight: 700;
+    }
+    .hero-actions, .stats, .platform-grid, .features, .arch-row {
+      display: grid;
+      gap: 18px;
+    }
+    .hero-actions {
+      grid-template-columns: repeat(2, max-content);
+      margin: 28px 0;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 0 22px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(255,255,255,.82);
+      color: var(--deep);
+      font-weight: 900;
+      box-shadow: var(--soft-shadow);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .btn:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 18px 36px rgba(212,96,122,.24); }
+    .btn.primary {
+      color: white;
+      background: linear-gradient(135deg, #FFB6C1 0%, #ff7fa3 48%, #D4607A 100%);
+    }
+    .stats {
+      grid-template-columns: repeat(3, 1fr);
+      max-width: 680px;
+    }
+    .stat {
+      min-height: 108px;
+      padding: 20px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.8);
+      border: 1px solid rgba(255,255,255,.9);
+      box-shadow: var(--soft-shadow);
+    }
+    .stat strong { display: block; color: var(--deep); font-size: 28px; }
+    .stat span { color: var(--muted); font-weight: 800; font-size: 13px; }
+
+    .hero-visual, .platform-card, .card, .architecture, .timeline-shell, .cta-box {
+      border-radius: 30px;
+      background: rgba(255,255,255,.84);
+      border: 2px solid rgba(255,255,255,.86);
+      box-shadow: var(--shadow);
+    }
+    .hero-visual {
+      position: relative;
+      min-height: 560px;
+      padding: 34px;
+      overflow: hidden;
+    }
+    .hero-visual::before {
+      content: "💕 ✨ 🎫";
+      position: absolute;
+      right: 28px;
+      top: 18px;
+      color: rgba(212,96,122,.44);
+      font-size: 30px;
+      animation: float 4s ease-in-out infinite;
+    }
+    .stage {
+      width: min(380px, 90%);
+      margin: 38px auto 34px;
+      padding: 20px;
+      border-radius: 999px;
+      color: #fff;
+      text-align: center;
+      font-weight: 900;
+      letter-spacing: 0;
+      background: linear-gradient(135deg, #D4607A, #FFB6C1);
+      box-shadow: 0 14px 32px rgba(212,96,122,.28);
+    }
+    .seat-map {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 14px;
+      max-width: 430px;
+      margin: 0 auto;
+      transform: perspective(600px) rotateX(8deg);
+    }
+    .seat {
+      aspect-ratio: 1;
+      border-radius: 16px 16px 22px 22px;
+      background: linear-gradient(180deg, #fff 0%, #FFE4E1 100%);
+      border: 2px solid rgba(255,182,193,.7);
+      box-shadow: inset 0 -8px 0 rgba(255,182,193,.24);
+      animation: seatBounce 2.8s ease-in-out infinite;
+    }
+    .seat:nth-child(3n) { animation-delay: .2s; }
+    .seat:nth-child(4n) { animation-delay: .45s; }
+    .seat.target {
+      background: linear-gradient(180deg, #ff7fa3, #D4607A);
+      border-color: #fff;
+      box-shadow: 0 0 0 6px rgba(255,182,193,.24), inset 0 -8px 0 rgba(166,47,77,.2);
+    }
+    .floating {
+      position: absolute;
+      width: 190px;
+      padding: 14px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.88);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: var(--soft-shadow);
+      animation: float 4.4s ease-in-out infinite;
+    }
+    .floating b { display: block; color: var(--deep); margin-bottom: 4px; }
+    .float-1 { left: 24px; bottom: 44px; }
+    .float-2 { right: 24px; bottom: 104px; animation-delay: .8s; }
+
+    .section-head {
+      max-width: 760px;
+      margin-bottom: 28px;
+    }
+    .section-head h2 {
+      margin-bottom: 12px;
+      color: var(--deep);
+      font-size: clamp(30px, 4vw, 48px);
+    }
+    .section-head p { color: var(--muted); font-weight: 700; line-height: 1.75; }
+    .platform-grid { grid-template-columns: repeat(3, 1fr); }
+    .platform-card {
+      padding: 24px;
+      transition: transform .25s ease;
+    }
+    .platform-card:hover, .card:hover { transform: translateY(-7px); }
+    .platform-title {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .platform-title h3 { color: var(--deep); font-size: 26px; margin-bottom: 0; }
+    .pill {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #FFE4E1;
+      color: var(--deep);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .flow-step {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      padding: 14px 0;
+      border-top: 1px dashed rgba(255,182,193,.8);
+    }
+    .flow-step:first-of-type { border-top: 0; }
+    .num {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      color: #fff;
+      background: linear-gradient(135deg, #FFB6C1, #D4607A);
+      font-weight: 900;
+    }
+    .flow-step b { display: block; color: #b94d68; margin-bottom: 4px; }
+    .flow-step span { color: var(--muted); font-size: 14px; line-height: 1.6; font-weight: 700; }
+
+    .features { grid-template-columns: repeat(5, 1fr); }
+    .card {
+      min-height: 230px;
+      padding: 24px;
+      transition: transform .25s ease;
+    }
+    .icon, .emoji {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      margin-bottom: 18px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #FFFFFF, #FFE4E1);
+      color: var(--deep);
+      font-size: 28px;
+      box-shadow: var(--soft-shadow);
+      animation: bounce 3.2s ease-in-out infinite;
+    }
+    .card h3, .arch-node b { color: var(--deep); }
+    .card p, .arch-node span { color: var(--muted); line-height: 1.65; font-weight: 700; }
+
+    .architecture { padding: 28px; }
+    .arch-row { grid-template-columns: repeat(4, 1fr); position: relative; }
+    .arch-row::before {
+      content: "";
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      top: 50%;
+      border-top: 4px dotted rgba(255,182,193,.75);
+      transform: translateY(-50%);
+    }
+    .arch-node {
+      position: relative;
+      z-index: 1;
+      min-height: 210px;
+      padding: 20px;
+      border-radius: 26px;
+      background: linear-gradient(180deg, #fff, #fff7f8);
+      box-shadow: var(--soft-shadow);
+      display: flex;
+      align-items: center;
+    }
+
+    .timeline-shell {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 24px;
+      padding: 28px;
+      overflow: hidden;
+    }
+    .timer-card {
+      min-height: 360px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      padding: 26px;
+      border-radius: 28px;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 28%, rgba(255,255,255,.95) 0 21%, transparent 22%),
+        linear-gradient(135deg, #FFE4E1, #FFB6C1);
+      animation: softPulse 2.8s ease-in-out infinite;
+    }
+    .big-clock {
+      color: #fff;
+      font-size: clamp(52px, 8vw, 92px);
+      font-weight: 900;
+      text-shadow: 0 8px 0 rgba(212,96,122,.18);
+    }
+    .timer-card p { max-width: 340px; color: #8f4d62; font-weight: 800; line-height: 1.7; }
+    .timeline-list { padding: 10px; }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 18px;
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.76);
+      box-shadow: var(--soft-shadow);
+      margin-bottom: 14px;
+      animation: timelinePop 6s ease-in-out infinite;
+    }
+    .timeline-item:nth-child(2) { animation-delay: .45s; }
+    .timeline-item:nth-child(3) { animation-delay: .9s; }
+    .timeline-item:nth-child(4) { animation-delay: 1.35s; }
+    .timeline-item:nth-child(5) { animation-delay: 1.8s; }
+    .time {
+      display: grid;
+      place-items: center;
+      min-height: 48px;
+      border-radius: 18px;
+      color: #fff;
+      background: linear-gradient(135deg, #FFB6C1, #D4607A);
+      font-weight: 900;
+    }
+    .timeline-item b { display: block; color: #b94d68; margin-bottom: 6px; }
+    .timeline-item span { color: var(--muted); line-height: 1.6; font-weight: 700; }
+
+    .cta { padding-bottom: 92px !important; }
+    .cta-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 34px;
+    }
+    .cta-box h2 { color: var(--deep); font-size: 34px; margin-bottom: 10px; }
+    .cta-box p { color: var(--muted); line-height: 1.7; font-weight: 700; }
+    .notice {
+      margin-bottom: 0;
+      padding: 14px 16px;
+      border-radius: 20px;
+      background: #fff7f8;
+      border: 1px dashed rgba(212,96,122,.32);
+      font-size: 13px;
+    }
+
+    .decor {
+      position: absolute;
+      z-index: 2;
+      pointer-events: none;
+      filter: drop-shadow(0 16px 20px rgba(212,96,122,.16));
+    }
+
+    /* Hello Kitty: no mouth, white round face, pink bow on right ear, 6 whiskers. */
+    .kitty {
+      width: 168px;
+      height: 142px;
+      left: -8px;
+      top: 22px;
+      animation: float 4.2s ease-in-out infinite;
+    }
+    .kitty .head {
+      position: absolute;
+      left: 13px;
+      top: 18px;
+      width: 138px;
+      height: 110px;
+      border: 4px solid #292023;
+      border-radius: 52% 52% 48% 48%;
+      background: #fff;
+    }
+    .kitty .head::before,
+    .kitty .head::after {
+      content: "";
+      position: absolute;
+      top: -18px;
+      width: 42px;
+      height: 44px;
+      border: 4px solid #292023;
+      background: #fff;
+      z-index: -1;
+    }
+    .kitty .head::before { left: 10px; border-radius: 72% 22% 58% 30%; transform: rotate(-28deg); }
+    .kitty .head::after { right: 10px; border-radius: 22% 72% 30% 58%; transform: rotate(28deg); }
+    .kitty .eye {
+      position: absolute;
+      top: 70px;
+      width: 12px;
+      height: 18px;
+      border-radius: 50%;
+      background: #1f1b1d;
+    }
+    .kitty .eye.left { left: 56px; }
+    .kitty .eye.right { right: 56px; }
+    .kitty .nose {
+      position: absolute;
+      left: 50%;
+      top: 84px;
+      width: 22px;
+      height: 14px;
+      border: 3px solid #292023;
+      border-radius: 50%;
+      background: #ffd43b;
+      transform: translateX(-50%);
+    }
+    .kitty .whisker {
+      position: absolute;
+      width: 42px;
+      height: 3px;
+      border-radius: 999px;
+      background: #292023;
+    }
+    .kitty .w1 { left: 3px; top: 77px; transform: rotate(10deg); }
+    .kitty .w2 { left: 1px; top: 91px; }
+    .kitty .w3 { left: 5px; top: 105px; transform: rotate(-10deg); }
+    .kitty .w4 { right: 3px; top: 77px; transform: rotate(-10deg); }
+    .kitty .w5 { right: 1px; top: 91px; }
+    .kitty .w6 { right: 5px; top: 105px; transform: rotate(10deg); }
+    .kitty .bow {
+      position: absolute;
+      right: 6px;
+      top: 0;
+      width: 64px;
+      height: 48px;
+      animation: bowWiggle 2.6s ease-in-out infinite;
+    }
+    .kitty .bow::before,
+    .kitty .bow::after {
+      content: "";
+      position: absolute;
+      top: 8px;
+      width: 34px;
+      height: 32px;
+      border: 3px solid #292023;
+      background: #FFB6C1;
+      border-radius: 52% 46% 50% 45%;
+    }
+    .kitty .bow::before { left: 0; transform: rotate(25deg); }
+    .kitty .bow::after { right: 0; transform: rotate(-25deg); }
+    .kitty .knot {
+      position: absolute;
+      left: 50%;
+      top: 17px;
+      width: 22px;
+      height: 20px;
+      border: 3px solid #292023;
+      border-radius: 50%;
+      background: #ff7fa3;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    /* Pingu: black oval body, white oval belly, small eyes, orange triangle beak and flat feet. */
+    .pingu {
+      width: 150px;
+      height: 182px;
+      right: 3%;
+      top: -20px;
+      animation: waddle 4s ease-in-out infinite;
+    }
+    .pingu .body {
+      position: absolute;
+      left: 21px;
+      top: 12px;
+      width: 108px;
+      height: 142px;
+      border-radius: 52% 52% 46% 46%;
+      background: #151419;
+      box-shadow: inset -10px -12px 0 rgba(0,0,0,.2);
+    }
+    .pingu .belly {
+      position: absolute;
+      left: 43px;
+      top: 56px;
+      width: 64px;
+      height: 86px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .pingu .eye {
+      position: absolute;
+      top: 39px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .pingu .eye::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 4px;
+      width: 6px;
+      height: 7px;
+      border-radius: 50%;
+      background: #111;
+    }
+    .pingu .eye.left { left: 57px; }
+    .pingu .eye.right { right: 57px; }
+    .pingu .beak {
+      position: absolute;
+      left: 50%;
+      top: 58px;
+      width: 0;
+      height: 0;
+      border-left: 22px solid transparent;
+      border-right: 22px solid transparent;
+      border-top: 28px solid #ff9c27;
+      transform: translateX(-50%);
+    }
+    .pingu .flipper {
+      position: absolute;
+      top: 72px;
+      width: 28px;
+      height: 70px;
+      border-radius: 70% 30% 70% 30%;
+      background: #151419;
+    }
+    .pingu .flipper.left { left: 7px; transform: rotate(18deg); }
+    .pingu .flipper.right { right: 7px; transform: rotate(-18deg); }
+    .pingu .foot {
+      position: absolute;
+      bottom: 5px;
+      width: 50px;
+      height: 20px;
+      border-radius: 50%;
+      background: #ff9c27;
+      box-shadow: inset 0 -5px 0 rgba(180,90,0,.18);
+    }
+    .pingu .foot.left { left: 27px; transform: rotate(-7deg); }
+    .pingu .foot.right { right: 27px; transform: rotate(7deg); }
+
+    /* Milo: milk-tea poodle baby with pom-pom ears, white bib, bow tie and paws. */
+    .milo {
+      width: 176px;
+      height: 186px;
+      right: 2%;
+      bottom: 22px;
+      animation: fluffyBounce 4.6s ease-in-out infinite;
+    }
+    .milo .body {
+      position: absolute;
+      left: 38px;
+      top: 82px;
+      width: 100px;
+      height: 92px;
+      border-radius: 50%;
+      background: var(--tea);
+      box-shadow: inset -10px -12px 0 rgba(135,84,45,.13);
+    }
+    .milo .head {
+      position: absolute;
+      left: 35px;
+      top: 10px;
+      width: 106px;
+      height: 98px;
+      border-radius: 50%;
+      background: var(--tea);
+      box-shadow: inset -9px -9px 0 rgba(135,84,45,.12);
+    }
+    .milo .pom {
+      position: absolute;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: var(--tea);
+      box-shadow:
+        0 0 0 8px rgba(210,166,121,.35),
+        inset -7px -7px 0 rgba(135,84,45,.1);
+    }
+    .milo .pom.left { left: 14px; top: 0; }
+    .milo .pom.right { right: 14px; top: 0; }
+    .milo .ear {
+      position: absolute;
+      top: 44px;
+      width: 48px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--tea);
+      box-shadow: inset -7px -7px 0 rgba(135,84,45,.1);
+    }
+    .milo .ear.left { left: 10px; transform: rotate(18deg); }
+    .milo .ear.right { right: 10px; transform: rotate(-18deg); }
+    .milo .eye {
+      position: absolute;
+      top: 51px;
+      width: 10px;
+      height: 12px;
+      border-radius: 50%;
+      background: #161113;
+      box-shadow: 3px -2px 0 -1px #fff;
+      animation: blink 4.2s ease-in-out infinite;
+    }
+    .milo .eye.left { left: 69px; }
+    .milo .eye.right { right: 69px; }
+    .milo .nose {
+      position: absolute;
+      left: 50%;
+      top: 68px;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 10px solid #161113;
+      transform: translateX(-50%);
+    }
+    .milo .collar {
+      position: absolute;
+      left: 49px;
+      top: 101px;
+      width: 78px;
+      height: 34px;
+      background: #fff;
+      clip-path: polygon(0 0, 48% 38%, 100% 0, 100% 100%, 0 100%);
+      border-radius: 0 0 18px 18px;
+    }
+    .milo .bib {
+      position: absolute;
+      left: 48px;
+      top: 122px;
+      width: 80px;
+      height: 48px;
+      border-radius: 0 0 42px 42px;
+      background: #fff;
+    }
+    .milo .bowtie {
+      position: absolute;
+      left: 50%;
+      top: 103px;
+      width: 40px;
+      height: 22px;
+      transform: translateX(-50%);
+      animation: bowWiggle 2.4s ease-in-out infinite;
+    }
+    .milo .bowtie::before,
+    .milo .bowtie::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      width: 18px;
+      height: 16px;
+      border-radius: 50% 45% 50% 45%;
+      background: #ff7fa3;
+    }
+    .milo .bowtie::before { left: 0; transform: rotate(18deg); }
+    .milo .bowtie::after { right: 0; transform: rotate(-18deg); }
+    .milo .bowtie span {
+      position: absolute;
+      left: 50%;
+      top: 7px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #D4607A;
+      transform: translateX(-50%);
+      z-index: 1;
+    }
+    .milo .paw {
+      position: absolute;
+      bottom: 2px;
+      width: 34px;
+      height: 24px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: inset 0 -4px 0 rgba(255,182,193,.2);
+    }
+    .milo .paw.left { left: 45px; transform: rotate(-8deg); }
+    .milo .paw.right { right: 45px; transform: rotate(8deg); }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-16px) rotate(2deg); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.05); }
+    }
+    @keyframes swing {
+      0%, 100% { transform: rotate(-1deg); }
+      50% { transform: rotate(2deg); }
+    }
+    @keyframes seatBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes bowWiggle {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(8deg); }
+    }
+    @keyframes waddle {
+      0%, 100% { transform: translateY(0) rotate(-3deg); }
+      50% { transform: translateY(-12px) rotate(4deg); }
+    }
+    @keyframes fluffyBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-12px) scale(1.035); }
+    }
+    @keyframes blink {
+      0%, 92%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(.18); }
+    }
+    @keyframes softPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.015); }
+    }
+    @keyframes timelinePop {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(8px); }
+    }
+
+    @media (max-width: 980px) {
+      .hero, .timeline-shell { grid-template-columns: 1fr; }
+      .hero { padding-top: 54px; }
+      .platform-grid, .features, .arch-row, .stats { grid-template-columns: repeat(2, 1fr); }
+      .features .card:last-child { grid-column: span 2; }
+      .arch-row::before { display: none; }
+      .kitty { opacity: .55; transform-origin: left top; scale: .78; }
+      .pingu { opacity: .5; right: 0; scale: .78; }
+      .milo { opacity: .52; scale: .76; transform-origin: right bottom; }
+    }
+
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 22px, 1160px); }
+      .nav-inner { align-items: flex-start; flex-direction: column; padding: 12px 0; }
+      .nav-links { justify-content: flex-start; }
+      .hero-actions, .stats, .platform-grid, .features, .arch-row { grid-template-columns: 1fr; }
+      .features .card:last-child { grid-column: auto; }
+      .hero-visual { min-height: 480px; padding: 22px; }
+      .floating { position: static; width: auto; margin-top: 16px; }
+      .seat-map { gap: 9px; }
+      .timeline-item { grid-template-columns: 1fr; }
+      .cta-box { flex-direction: column; align-items: flex-start; }
+      .kitty { left: -30px; top: 8px; opacity: .34; scale: .64; }
+      .pingu { top: -30px; opacity: .36; scale: .62; }
+      .milo { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <div class="brand"><span class="brand-badge">🎀</span> 张星月专属EXO演唱会抢票神器</div>
+      <div class="nav-links" aria-label="页面导航">
+        <a href="#flow">平台流程</a>
+        <a href="#features">核心功能</a>
+        <a href="#architecture">技术架构</a>
+        <a href="#timeline">时间线</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="wrap hero">
+      <div class="decor kitty" aria-hidden="true">
+        <div class="head"></div>
+        <div class="bow"><span class="knot"></span></div>
+        <span class="eye left"></span><span class="eye right"></span><span class="nose"></span>
+        <span class="whisker w1"></span><span class="whisker w2"></span><span class="whisker w3"></span>
+        <span class="whisker w4"></span><span class="whisker w5"></span><span class="whisker w6"></span>
+      </div>
+
+      <div>
+        <div class="eyebrow">🎫✨ 粉色守候，开售瞬间进入节奏</div>
+        <h1><span class="gradient-text">张星月专属EXO演唱会抢票神器</span><br />甜甜监测每一张票</h1>
+        <p class="hero-copy">
+          面向 EXO 演唱会热门开售场景的可爱风自动化介绍页：提前配置平台和场次，循环监测票况，筛选候选座位，并在关键节点发出温柔提醒。
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#timeline">🎀 查看抢票时间线</a>
+          <a class="btn" href="#architecture">🐩 了解技术架构</a>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong>3 平台</strong><span>Yes24 / Melon / Interpark</span></div>
+          <div class="stat"><strong>💕 多策略</strong><span>预算、区域、连座、优先级</span></div>
+          <div class="stat"><strong>✨ 可视化</strong><span>流程、状态、提醒全展示</span></div>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="粉色演唱会座位示意图">
+        <div class="stage">EXO STAGE</div>
+        <div class="floating float-1"><b>🎯 智能目标</b>内场优先、连座优先、预算优先</div>
+        <div class="floating float-2"><b>📣 甜甜提醒</b>候选出现立刻通知，不错过关键节点</div>
+        <div class="seat-map">
+          <span class="seat"></span><span class="seat"></span><span class="seat target"></span><span class="seat"></span><span class="seat"></span><span class="seat"></span>
+          <span class="seat"></span><span class="seat"></span><span class="seat"></span><span class="seat target"></span><span class="seat"></span><span class="seat"></span>
+          <span class="seat"></span><span class="seat"></span><span class="seat"></span><span class="seat"></span><span class="seat"></span><span class="seat"></span>
+          <span class="seat target"></span><span class="seat"></span><span class="seat"></span><span class="seat"></span><span class="seat"></span><span class="seat"></span>
+          <span class="seat"></span><span class="seat"></span><span class="seat target"></span><span class="seat"></span><span class="seat"></span><span class="seat"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" id="flow">
+      <div class="decor pingu" aria-hidden="true">
+        <div class="body"></div><div class="belly"></div>
+        <span class="eye left"></span><span class="eye right"></span><span class="beak"></span>
+        <span class="flipper left"></span><span class="flipper right"></span>
+        <span class="foot left"></span><span class="foot right"></span>
+      </div>
+      <div class="section-head">
+        <h2>三大韩国票务平台流程图 🐧</h2>
+        <p>同一套抢票思路适配不同平台节奏：先准备、再监测、再筛选、再提醒，让每一步都有清晰状态。</p>
+      </div>
+      <div class="platform-grid">
+        <article class="platform-card">
+          <div class="platform-title"><h3>Yes24</h3><span class="pill">粉色排队模式</span></div>
+          <div class="flow-step"><div class="num">1</div><div><b>登录与场次预设</b><span>提前确认账号、日期、票档、区域和人数。</span></div></div>
+          <div class="flow-step"><div class="num">2</div><div><b>开售监测</b><span>循环观察入口按钮、排队状态和售票页变化。</span></div></div>
+          <div class="flow-step"><div class="num">3</div><div><b>座位图识别</b><span>根据区域、颜色和可选状态筛选候选座位。</span></div></div>
+          <div class="flow-step"><div class="num">4</div><div><b>通知确认</b><span>出现候选后发出提醒，进入人工确认节奏。</span></div></div>
+        </article>
+
+        <article class="platform-card">
+          <div class="platform-title"><h3>Melon Ticket</h3><span class="pill">甜心筛选模式</span></div>
+          <div class="flow-step"><div class="num">1</div><div><b>演出信息准备</b><span>保存演出 ID、开售时间、票档、区域和预算。</span></div></div>
+          <div class="flow-step"><div class="num">2</div><div><b>候选池更新</b><span>按价格、区域、连座数量刷新候选清单。</span></div></div>
+          <div class="flow-step"><div class="num">3</div><div><b>锁座链路模拟</b><span>展示从候选座位到确认节点的快速流程。</span></div></div>
+          <div class="flow-step"><div class="num">4</div><div><b>失败重试</b><span>售罄、超时或限流后回到监测循环。</span></div></div>
+        </article>
+
+        <article class="platform-card">
+          <div class="platform-title"><h3>Interpark</h3><span class="pill">星光守候模式</span></div>
+          <div class="flow-step"><div class="num">1</div><div><b>入口状态检查</b><span>识别排队、验证、售票页和错误页状态。</span></div></div>
+          <div class="flow-step"><div class="num">2</div><div><b>场馆区域定位</b><span>优先点击目标区域，同时保留备用区域。</span></div></div>
+          <div class="flow-step"><div class="num">3</div><div><b>座位策略执行</b><span>按预算、视野、距离和连座策略挑选。</span></div></div>
+          <div class="flow-step"><div class="num">4</div><div><b>结果同步</b><span>将成功、失败、重试状态同步到提醒通道。</span></div></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap" id="features">
+      <div class="section-head">
+        <h2>核心功能 🎫</h2>
+        <p>围绕抢票前、中、后的关键动作拆成轻量模块：减少重复操作，保留人工确认，状态一眼可见。</p>
+      </div>
+      <div class="features">
+        <article class="card"><div class="icon">🔐</div><h3>快速锁座</h3><p>模拟候选座位到确认节点的高速链路，突出开售瞬间的响应体验。</p></article>
+        <article class="card"><div class="icon">🖱️</div><h3>智能选座</h3><p>适配可视化座位图，通过区域、坐标和连座策略完成选座演示。</p></article>
+        <article class="card"><div class="icon">🛡️</div><h3>状态管理</h3><p>以合规展示方式呈现排队、限流、超时、重试等复杂状态。</p></article>
+        <article class="card"><div class="icon">🛰️</div><h3>多平台覆盖</h3><p>覆盖 Yes24、Melon、Interpark 三种常见韩国演唱会票务路径。</p></article>
+        <article class="card"><div class="icon">💌</div><h3>消息通知</h3><p>开售、候选、锁座、失败重试都能同步提醒，减少一直盯屏的压力。</p></article>
+      </div>
+    </section>
+
+    <section class="wrap" id="architecture">
+      <div class="decor milo" aria-hidden="true">
+        <span class="pom left"></span><span class="pom right"></span>
+        <span class="ear left"></span><span class="ear right"></span>
+        <div class="body"></div><div class="head"></div>
+        <span class="eye left"></span><span class="eye right"></span><span class="nose"></span>
+        <span class="collar"></span><span class="bib"></span>
+        <span class="bowtie"><span></span></span>
+        <span class="paw left"></span><span class="paw right"></span>
+      </div>
+      <div class="section-head">
+        <h2>技术架构 ✨</h2>
+        <p>从浏览器侧自动化到通知侧闭环，形成清晰的小工作台：轻松设置、持续监测、及时反馈。</p>
+      </div>
+      <div class="architecture">
+        <div class="arch-row">
+          <div class="arch-node"><div><div class="emoji">🧭</div><b>浏览器配置层</b><span>管理平台入口、页面状态捕捉和可视化配置。</span></div></div>
+          <div class="arch-node"><div><div class="emoji">🌸</div><b>抢票策略层</b><span>保存平台、场次、票档、区域、预算和人数。</span></div></div>
+          <div class="arch-node"><div><div class="emoji">⚙️</div><b>自动化执行层</b><span>执行刷新、识别、筛选、重试和结果记录。</span></div></div>
+          <div class="arch-node"><div><div class="emoji">💕</div><b>通知反馈层</b><span>通过本地提示或消息通道同步关键节点。</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" id="timeline">
+      <div class="section-head">
+        <h2>抢票时间线动画 🎀</h2>
+        <p>从开售前准备到候选锁座，循环展示自动化流程如何把分散动作压缩成一条可跟踪的粉色时间线。</p>
+      </div>
+      <div class="timeline-shell">
+        <div class="timer-card">
+          <div class="big-clock">20:00</div>
+          <p>开售时间到，页面进入高频监测；每一次刷新、筛选和提醒都被记录成清晰状态。</p>
+        </div>
+        <div class="timeline-list">
+          <div class="timeline-item"><div class="time">T-10m</div><div><b>预热检查</b><span>确认登录、网络、目标场次、票档和通知通道。</span></div></div>
+          <div class="timeline-item"><div class="time">T-30s</div><div><b>进入待命</b><span>保持页面活跃，准备进入开售监测循环。</span></div></div>
+          <div class="timeline-item"><div class="time">T+0s</div><div><b>入口开放</b><span>开始识别按钮、排队、验证码提示和票况状态。</span></div></div>
+          <div class="timeline-item"><div class="time">T+3s</div><div><b>候选出现</b><span>按区域、价格、连座数量筛选出优先座位。</span></div></div>
+          <div class="timeline-item"><div class="time">T+6s</div><div><b>提醒确认</b><span>把候选结果同步给张星月，进入最终确认节点。</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap cta">
+      <div class="cta-box">
+        <div>
+          <h2>让抢 EXO 门票变得更轻松 💕</h2>
+          <p>把重复刷新、区域筛选、候选识别和消息提醒交给自动化流程，你只需要关注关键确认节点。</p>
+          <p class="notice">本页面为静态视觉介绍，不连接任何票务平台，不提供真实绕过、攻击、滥用或违反平台规则的实现代码。实际购票请遵守平台条款、演出主办方规则和当地法律法规。</p>
+        </div>
+        <a class="btn primary" href="#flow">✨ 查看完整流程</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
