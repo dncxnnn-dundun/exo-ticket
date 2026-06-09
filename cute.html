@@ -681,7 +681,7 @@
       </div>
       <div class="timeline-shell">
         <div class="timer-card" id="sim-card">
-          <div class="big-clock" id="sim-clock">20:00</div>
+          <div class="big-clock" id="sim-clock">20:00:00</div>
           <p id="sim-status">点击下方按钮，模拟抢票全流程 ✨</p>
           <button class="btn primary" id="sim-btn" onclick="startSim()" style="margin-top:12px;font-size:20px;padding:14px 36px">🎫 开始模拟抢票</button>
         </div>
@@ -718,11 +718,11 @@ function startSim() {
   btn.textContent = '⏳ 模拟进行中...';
   
   const steps = [
-    { time: '19:50', status: '🔍 正在确认登录状态...', text: '预热检查中' },
-    { time: '19:59', status: '⚡ 高频刷新监控中，等待开售...', text: '待命中' },
-    { time: '20:00', status: '🚀 开售！正在识别入口按钮...', text: '入口开放' },
-    { time: '20:00', status: '🎯 扫描座位图，筛选候选座位...', text: '候选筛选中' },
-    { time: '20:00', status: '✅ 找到 2 个候选座位！已通知张星月 💕', text: '模拟完成！' },
+    { time: '19:50:00', status: '🔍 正在确认登录状态...' },
+    { time: '19:59:30', status: '⚡ 高频刷新监控中，等待开售...' },
+    { time: '20:00:00', status: '🚀 开售！正在识别入口按钮...' },
+    { time: '20:00:03', status: '🎯 扫描座位图，筛选候选座位...' },
+    { time: '20:00:06', status: '✅ 找到 2 个候选座位！已通知张星月 💕' },
   ];
   
   // Reset all steps
@@ -734,7 +734,7 @@ function startSim() {
   function next() {
     if (i > 0) document.getElementById('step'+(i-1)).classList.replace('active', 'done');
     if (i >= steps.length) {
-      clock.textContent = '20:00';
+      clock.textContent = '20:00:06';
       status.textContent = '✅ 模拟完成！候选座位已通知张星月 🎉';
       btn.textContent = '🔄 再来一次';
       btn.disabled = false;
